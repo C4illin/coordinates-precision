@@ -364,7 +364,7 @@ function updateVisualization(shouldFitBounds = false) {
   // Update Stats Table
   statHeight.textContent = formatDistance(metrics.heightM);
   statWidthMid.textContent = formatDistance(metrics.widthMidM);
-  statRatio.textContent = `${metrics.ratio.toFixed(3)} (cos ϕ)`;
+  statRatio.textContent = metrics.ratio.toFixed(3);
   statArea.textContent = formatArea(metrics.areaM2);
   statWidthSouth.textContent = formatDistance(metrics.widthSouthM);
   statWidthNorth.textContent = formatDistance(metrics.widthNorthM);
