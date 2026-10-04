@@ -1,6 +1,4 @@
 :root {
-  --map-width: 52%;
-  --panel-width: 48%;
   --accent-color: #2563eb;
   --accent-light: #dbeafe;
 }
@@ -22,9 +20,8 @@ body {
   color: var(--pico-color);
 }
 
-/* Map takes the left half and sticks */
 div#map {
-  width: var(--map-width);
+  width: 50%;
   height: 100vh;
   position: -webkit-sticky;
   position: sticky;
@@ -32,9 +29,8 @@ div#map {
   background-color: #0b1120;
 }
 
-/* Panel takes the right half and scrolls smoothly */
 main.container {
-  width: var(--panel-width);
+  width: 50%;
   min-height: 100vh;
   padding: 1.5rem;
   box-sizing: border-box;
@@ -128,7 +124,7 @@ main.container {
 .coord-badge {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--pico-primary);
+  color: white;
   background: var(--pico-primary-background);
   padding: 0.1rem 0.5rem;
   border-radius: 9999px;
