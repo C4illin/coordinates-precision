@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coordinate Precision Visualizer | Curved Lat/Lon on 3D Globe</title>
+    <meta
+      name="description"
+      content="Interactive coordinate precision visualizer showing how decimal degree accuracy maps to geographic bounds on a curved 3D globe."
+    />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.conditional.min.css"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^6.6.0/dist/maplibre-gl.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <main class="pico container">
+      <header class="header">
+        <div class="title-row">
+          <h1>Coordinate Precision</h1>
+          <button id="themeToggle" class="outline contrast theme-btn" aria-label="Toggle theme">
+            🌓
+          </button>
+        </div>
+        <p class="subtitle">
+          Precision is inferred directly from the decimal places in your coordinates. Watch bounding
+          boxes curve along parallels on a 3D Earth.
+        </p>
+      </header>
+
+      <!-- Coordinates Input Card -->
+      <article class="card">
+        <header>
+          <div class="flex-between">
+            <span class="card-title">Coordinates</span>
+            <button id="gpsButton" class="link-btn">📍 Use GPS</button>
+          </div>
+        </header>
+
+        <div class="grid">
+          <div>
+            <div class="label-row">
+              <label for="latInput">Latitude</label>
+              <span id="latInferredBadge" class="coord-badge">1 dec (±0.05°)</span>
+            </div>
+            <input
+              type="text"
+              id="latInput"
+              inputmode="decimal"
+              spellcheck="false"
+              autocomplete="off"
+              value="35.6"
+              placeholder="e.g. 35.6"
+              required
+            />
+          </div>
+          <div>
+            <div class="label-row">
+              <label for="lonInput">Longitude</label>
+              <span id="lonInferredBadge" class="coord-badge">1 dec (±0.05°)</span>
+            </div>
+            <input
+              type="text"
+              id="lonInput"
+              inputmode="decimal"
+              spellcheck="false"
+              autocomplete="off"
+              value="139.7"
+              placeholder="e.g. 139.7"
+              required
+            />
+          </div>
+        </div>
+
+        <small class="hint">
+          💡 Type coordinates above (e.g. <code>35.6</code>) or paste <code>lat, lon</code>.
+          Trailing zeros like <code>35.60</code> increase precision.
+        </small>
+
+        <div class="toggles-grid">
+          <label class="checkbox-label">
+            <input type="checkbox" id="graticuleToggle" role="switch" checked />
+            Show full parallel & meridian lines
+          </label>
+        </div>
+      </article>
+
+      <!-- Live Measurements & Real-World Scale Card -->
+      <article class="card highlight-card">
+        <header>
+          <span class="card-title">Inferred Bounds & Physical Scale</span>
+        </header>
+
+        <div class="scale-banner">
+          <div class="scale-icon" id="scaleIcon">🏙️</div>
+          <div>
+            <div class="scale-title" id="scaleTitle">Metropolitan Area or Large City</div>
+            <div class="scale-desc" id="scaleDesc">
+              About 11.1 km across. Differentiates neighboring cities or spans a large municipality.
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-table">
+          <div class="stat-item">
+            <span class="stat-label">Height (Latitude)</span>
+            <span class="stat-value" id="statHeight">11.12 km</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Width (Mid-Latitude)</span>
+            <span class="stat-value" id="statWidthMid">9.04 km</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Width/Height Ratio</span>
+            <span class="stat-value" id="statRatio">0.813 (cos ϕ)</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Surface Area</span>
+            <span class="stat-value" id="statArea">100.5 km²</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">South Edge Width</span>
+            <span class="stat-value" id="statWidthSouth">9.05 km</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">North Edge Width</span>
+            <span class="stat-value" id="statWidthNorth">9.03 km</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Educational Explanation Card -->
+      <article class="card">
+        <header>
+          <span class="card-title">How Geodesic Precision Works</span>
+        </header>
+        <p>Coordinates represent an uncertainty region on Earth's surface:</p>
+        <ul>
+          <li>
+            <strong>Rounding vs. Marker:</strong> Entering <code>35.6</code> with rounding defines
+            the interval <code>[35.55, 35.65]</code>. The point marker sits at the exact nominal
+            coordinate <code>35.60000000</code> in the center.
+          </li>
+          <li>
+            <strong>Parallels of Latitude curve:</strong> Every line of constant latitude is a
+            <em>small circle</em> around Earth's axis. On this 3D globe, the north and south edges
+            visibly curve across the sphere.
+          </li>
+          <li>
+            <strong>Longitudinal Convergence:</strong> The width of 1° of longitude shrinks by
+            <code>cos(latitude)</code>. At 60° latitude, longitude is half the width of latitude.
+          </li>
+        </ul>
+        <footer>
+          <small>
+            Built with
+            <a href="https://maplibre.org/" target="_blank" rel="noopener">MapLibre GL JS</a>
+            (3D Globe) &
+            <a href="https://picocss.com/" target="_blank" rel="noopener">Pico CSS</a>.
+          </small>
+        </footer>
+      </article>
+    </main>
+
+    <script defer src="script.js" type="module"></script>
+  </body>
+</html>
