@@ -1,7 +1,7 @@
 {
   "name": "coordinates-precision",
   "version": "1.0.0",
-  "description": "Interactive coordinate precision visualizer showing how decimal accuracy maps to geographic bounds on a curved globe.",
+  "description": "Interactive coordinate precision visualizer.",
   "license": "MIT",
   "author": "C4illin",
   "type": "module",
