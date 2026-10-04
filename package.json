@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "npx serve docs",
     "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix"
   },
@@ -16,6 +17,7 @@
     "oxlint": "^1.81.0"
   },
   "lint-staged": {
-    "*": "oxfmt --no-error-on-unmatched-pattern"
+    "*": "oxfmt --no-error-on-unmatched-pattern",
+    "*.{js,jsx,ts,tsx,mjs,cjs}": "npm run lint"
   }
 }
