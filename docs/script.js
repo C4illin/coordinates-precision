@@ -386,10 +386,6 @@ function updateVisualization(shouldFitBounds = false) {
     </div>
   `);
 
-  if (!map.isStyleLoaded()) {
-    return;
-  }
-
   // 1. Single Active Precision Polygon
   const mainFeature = createCurvedBoxFeature(currentBox, {
     level: currentBox.maxPrecision,
@@ -403,7 +399,7 @@ function updateVisualization(shouldFitBounds = false) {
     });
   }
 
-  // 3. Full Graticule Parallel / Meridian Lines
+  // 2. Full Graticule Parallel / Meridian Lines
   const graticuleSource = map.getSource("graticule-lines");
   if (graticuleSource) {
     graticuleSource.setData(
@@ -419,7 +415,7 @@ function updateVisualization(shouldFitBounds = false) {
   }
 }
 
-function fitViewToBox(box = null) {
+function fitViewToBox(box = null, animate = true) {
   const targetBox = box || calculateInferredBox(latInput.value, lonInput.value);
   map.fitBounds(
     [
@@ -428,21 +424,30 @@ function fitViewToBox(box = null) {
     ],
     {
       padding: 60,
-      duration: 1500,
+      duration: animate ? 1200 : 0,
       maxZoom: 22,
     },
   );
 }
 
 function setupLayers() {
-  // Set 3D globe projection
-  map.setProjection({ type: "globe" });
+  // Set 3D globe projection if not already set
+  if (map.getProjection()?.type !== "globe") {
+    map.setProjection({ type: "globe" });
+  }
+
+  const currentBox = calculateInferredBox(latInput.value, lonInput.value);
+  const mainFeature = createCurvedBoxFeature(currentBox, {
+    level: currentBox.maxPrecision,
+  });
 
   // Source for full parallel and meridian lines
   if (!map.getSource("graticule-lines")) {
     map.addSource("graticule-lines", {
       type: "geojson",
-      data: { type: "FeatureCollection", features: [] },
+      data: state.showGraticule
+        ? createGraticuleFeature(currentBox.lat, currentBox.lon)
+        : { type: "FeatureCollection", features: [] },
     });
 
     map.addLayer({
@@ -462,7 +467,10 @@ function setupLayers() {
   if (!map.getSource("precision-box")) {
     map.addSource("precision-box", {
       type: "geojson",
-      data: { type: "FeatureCollection", features: [] },
+      data: {
+        type: "FeatureCollection",
+        features: [mainFeature],
+      },
     });
 
     map.addLayer({
@@ -489,8 +497,23 @@ function setupLayers() {
   updateVisualization(false);
 }
 
+// Initial UI calculation on script parse
+updateVisualization(false);
+
 // Map event listeners
-map.on("style.load", setupLayers);
+map.on("load", () => {
+  setupLayers();
+  fitViewToBox(null, false);
+});
+
+map.on("style.load", () => {
+  setupLayers();
+});
+
+if (map.loaded()) {
+  setupLayers();
+  fitViewToBox(null, false);
+}
 
 map.on("click", (e) => {
   const currentBox = calculateInferredBox(latInput.value, lonInput.value);
